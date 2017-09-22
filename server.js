@@ -5,9 +5,9 @@ var chunker = require('pos-chunker');
 
 // Setup Restify Server
 var server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function () {
-    console.log('%s listening to %s', server.name, server.url);
-});
+// server.listen(process.env.port || process.env.PORT || 3978, function () {
+//     console.log('%s listening to %s', server.name, server.url);
+// });
 
 // Create chat connector for communicating with the Bot Framework Service
 var connector = new builder.ChatConnector({
@@ -18,8 +18,18 @@ var connector = new builder.ChatConnector({
 // Listen for messages from users
 server.post('/api/messages', connector.listen());
 
+// Serve a static web page
+server.get(/.*/, restify.serveStatic({
+	'directory': '.',
+	'default': 'index.html'
+}));
+
+server.listen(process.env.port || 3978, function () {
+    console.log('%s listening to %s', server.name, server.url); 
+});
+
 var bot = new builder.UniversalBot(connector, function (session, args) {
-    session.send("Hey there, I am OGene! What can I do for you today?");
+    session.send("Hey there, I am OGenie! What can I do for you today?");
 });
 
 // Add global LUIS recognizer to bot
